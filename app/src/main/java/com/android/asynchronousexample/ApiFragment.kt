@@ -5,8 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,6 +26,8 @@ class ApiFragment : Fragment() {
 
     private val newsApiService = retrofit.create(NewsApiService::class.java)
 
+    private lateinit var newsAdapter: NewsAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,16 +38,24 @@ class ApiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val newsTextView = view.findViewById<TextView>(R.id.newsTextView)
+        val newsRecyclerView = view.findViewById<RecyclerView>(R.id.newsRecyclerView)
+        newsAdapter = NewsAdapter()
 
+        val layoutManager = LinearLayoutManager(requireContext())
+        newsRecyclerView.layoutManager = layoutManager
+        newsRecyclerView.adapter = newsAdapter
+
+        loadNewsData()
+    }
+
+    private fun loadNewsData() {
         val call = newsApiService.getTopHeadlines(apiKey, country)
         call.enqueue(object : Callback<NewsResponse> {
             override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     // 응답 처리 로직
-                    Log.d("isSuccessful", "$newsResponse")
-                    newsTextView.text = newsResponse.toString()
+                    formatAndDisplayNews(newsResponse)
                 } else {
                     // 에러 처리 로직
                     val errorBody = response.errorBody()?.string()
@@ -56,5 +67,10 @@ class ApiFragment : Fragment() {
                 // 실패 처리 로직
             }
         })
+    }
+
+    private fun formatAndDisplayNews(newsResponse: NewsResponse?) {
+        val articles = newsResponse?.articles ?: emptyList()
+        newsAdapter.setData(articles)
     }
 }
