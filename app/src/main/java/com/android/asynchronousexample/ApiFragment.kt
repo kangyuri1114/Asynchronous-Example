@@ -30,8 +30,9 @@ class ApiFragment : Fragment() {
     private lateinit var rootView: View
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
         rootView = inflater.inflate(R.layout.fragment_api, container, false)
         return rootView
@@ -43,7 +44,7 @@ class ApiFragment : Fragment() {
         rootView.setOnClickListener {
             if (currentClick < maxClicks) {
                 loadNewsData()
-                Log.d("API요청 $currentClick", " ${currentClick +1 } 번째 기사 불러오기 요청 시작")
+                Log.d("API요청 $currentClick", " ${currentClick + 1 } 번째 기사 불러오기 요청 시작")
             } else {
                 Log.d("5번 요청 끝", " $currentClick 번째 기사 불러오기 요청 끝")
             }
@@ -58,7 +59,7 @@ class ApiFragment : Fragment() {
                     val newsResponse = response.body()
                     // 응답 처리 로직
                     displayArticle(newsResponse?.articles?.getOrNull(currentClick))
-                    Log.d("isSuccessful / API 응답", "${currentClick +1 } 번째 뉴스 API 응답 받음")
+                    Log.d("isSuccessful / API 응답", "${currentClick + 1 } 번째 뉴스 API 응답 받음")
                     currentClick++
                 } else {
                     // 에러 처리 로직
