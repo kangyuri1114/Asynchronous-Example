@@ -58,7 +58,7 @@ class ApiFragment : Fragment() {
                     val newsResponse = response.body()
                     // 응답 처리 로직
                     displayArticle(newsResponse?.articles?.getOrNull(currentClick))
-                    Log.d("isSuccessful / API 응답", "뉴스 API 응답 받음")
+                    Log.d("isSuccessful / API 응답", "${currentClick +1 } 번째 뉴스 API 응답 받음")
                     currentClick++
                 } else {
                     // 에러 처리 로직

@@ -35,7 +35,7 @@ class ProgressBarFragment : Fragment() {
     suspend fun updateSeekBar() {
         withContext(Dispatchers.Main) {
             val currentProgress = seekBar.progress
-            Log.d("currentProgress", "$currentProgress")
+            Log.d("SeekBar 이동 위치", "($currentProgress / 100) 이동")
 
             if (currentProgress < seekBar.max) {
                 seekBar.progress = currentProgress + 10
