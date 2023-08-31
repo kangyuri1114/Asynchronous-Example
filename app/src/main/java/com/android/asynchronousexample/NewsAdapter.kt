@@ -23,6 +23,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
         return NewsViewHolder(view)
     }
 
+
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val article = articles[position]
         holder.bind(article)
