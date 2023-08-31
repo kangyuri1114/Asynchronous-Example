@@ -17,7 +17,7 @@ class ApiFragment : Fragment() {
 
     private val apiKey = "66416bcc4f96467b82bd61929f14df54"
     private val country = "kr"
-    private val maxClicks = 5
+    private val maxClicks = 10
     private var currentClick = 0
 
     private val retrofit = Retrofit.Builder()
