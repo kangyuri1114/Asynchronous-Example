@@ -5,9 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,6 +17,8 @@ class ApiFragment : Fragment() {
 
     private val apiKey = "66416bcc4f96467b82bd61929f14df54"
     private val country = "kr"
+    private val maxClicks = 5
+    private var currentClick = 0
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://newsapi.org/")
@@ -26,26 +27,27 @@ class ApiFragment : Fragment() {
 
     private val newsApiService = retrofit.create(NewsApiService::class.java)
 
-    private lateinit var newsAdapter: NewsAdapter
+    private lateinit var rootView: View
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_api, container, false)
+        rootView = inflater.inflate(R.layout.fragment_api, container, false)
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val newsRecyclerView = view.findViewById<RecyclerView>(R.id.newsRecyclerView)
-        newsAdapter = NewsAdapter()
-
-        val layoutManager = LinearLayoutManager(requireContext())
-        newsRecyclerView.layoutManager = layoutManager
-        newsRecyclerView.adapter = newsAdapter
-
-        loadNewsData()
+        rootView.setOnClickListener {
+            if (currentClick < maxClicks) {
+                loadNewsData()
+                Log.d("API요청 $currentClick", " ${currentClick +1 } 번째 기사 불러오기 요청 시작")
+            } else {
+                Log.d("5번 요청 끝", " $currentClick 번째 기사 불러오기 요청 끝")
+            }
+        }
     }
 
     private fun loadNewsData() {
@@ -55,9 +57,9 @@ class ApiFragment : Fragment() {
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     // 응답 처리 로직
-                    formatAndDisplayNews(newsResponse)
-                    Log.d("isSuccessful", "뉴스 API")
-
+                    displayArticle(newsResponse?.articles?.getOrNull(currentClick))
+                    Log.d("isSuccessful / API 응답", "뉴스 API 응답 받음")
+                    currentClick++
                 } else {
                     // 에러 처리 로직
                     val errorBody = response.errorBody()?.string()
@@ -71,8 +73,16 @@ class ApiFragment : Fragment() {
         })
     }
 
-    private fun formatAndDisplayNews(newsResponse: NewsResponse?) {
-        val articles = newsResponse?.articles ?: emptyList()
-        newsAdapter.setData(articles)
+    private fun displayArticle(article: Article?) {
+        val titleTextView = rootView.findViewById<TextView>(R.id.titleTextView)
+        val descriptionTextView = rootView.findViewById<TextView>(R.id.descriptionTextView)
+
+        if (article != null) {
+            titleTextView.text = article.title
+            descriptionTextView.text = article.description
+        } else {
+            titleTextView.text = "뉴스가 없습니다."
+            descriptionTextView.text = ""
+        }
     }
 }
