@@ -56,6 +56,8 @@ class ApiFragment : Fragment() {
                     val newsResponse = response.body()
                     // 응답 처리 로직
                     formatAndDisplayNews(newsResponse)
+                    Log.d("isSuccessful", "뉴스 API")
+
                 } else {
                     // 에러 처리 로직
                     val errorBody = response.errorBody()?.string()

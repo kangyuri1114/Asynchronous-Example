@@ -1,6 +1,7 @@
 package com.android.asynchronousexample
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,8 @@ class ProgressBarFragment : Fragment() {
     suspend fun updateSeekBar() {
         withContext(Dispatchers.Main) {
             val currentProgress = seekBar.progress
+            Log.d("currentProgress", "$currentProgress")
+
             if (currentProgress < seekBar.max) {
                 seekBar.progress = currentProgress + 10
             } else {
