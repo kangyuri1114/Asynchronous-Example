@@ -1,16 +1,18 @@
 package com.android.asynchronousexample
-
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SyncActivity : AppCompatActivity() {
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: NewsAdapter
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://newsapi.org/")
@@ -23,28 +25,26 @@ class SyncActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sync)
 
-        val apiKey = "66416bcc4f96467b82bd61929f14df54"
+        recyclerView = findViewById(R.id.recyclerView)
+        adapter = NewsAdapter()
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        val apiKey = "NEWS_API_KEY"
         val country = "kr"
 
+        // API 요청 및 응답을 동기적으로 처리하여 UI 스레드가 멈추는 상황을 시뮬레이션
         val call = newsApiService.getTopHeadlines(apiKey, country)
-        call.enqueue(object : Callback<NewsResponse> {
-            override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
-                if (response.isSuccessful) {
-                    val newsResponse = response.body()
-                    // 응답 처리 로직
-                    Log.d("isSuccessful", "$newsResponse")
-                    val newsTextView = findViewById<TextView>(R.id.newsTextView)
-                    newsTextView.text = newsResponse.toString()
-                } else {
-                    // 에러 처리 로직
-                    val errorBody = response.errorBody()?.string()
-                    Log.d("isSuccessful", "Fail: $errorBody")
-                }
-            }
+        val response = call.execute()
 
-            override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-                // 실패 처리 로직
+        if (response.isSuccessful) {
+            val newsResponse = response.body()
+            newsResponse?.articles?.let {
+                adapter.setData(it)
             }
-        })
+        } else {
+            // 에러 처리 로직
+        }
     }
 }
