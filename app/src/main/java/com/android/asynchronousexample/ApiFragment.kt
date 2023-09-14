@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiFragment : Fragment() {
 
-    private val apiKey = "66416bcc4f96467b82bd61929f14df54"
+    private val apiKey = "API_KEY"
     private val country = "kr"
     private val maxClicks = 10
     private var currentClick = 0
